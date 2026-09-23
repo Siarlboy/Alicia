@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iniciar sesión — Mi Salón</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF9F1;
+    --ink: #4A3339;
+    --ink-soft: #AD8C94;
+    --rose: #FF6FA0;
+    --rose-deep: #E64980;
+    --violet: #B29AE8;
+    --coral: #FF9E80;
+    --surface-2: #FFFFFF;
+    --line: #FBDCE6;
+    --red: #F0637A;
+    --red-bg: #FDE8EC;
+    --font-display: 'Jua', sans-serif;
+    --font-body: 'Quicksand', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    padding: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 34px 28px;
+    text-align: center;
+  }
+  .heart {
+    width: 40px; height: 40px;
+    color: var(--rose);
+    margin: 0 auto 10px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 26px;
+    margin: 0 0 4px;
+    color: var(--rose-deep);
+  }
+  p.sub { color: var(--ink-soft); font-size: 14px; margin: 0 0 24px; }
+  .field { text-align: left; margin-bottom: 14px; }
+  .field label { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; }
+  .field input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+  }
+  .field input:focus { outline: 2px solid var(--rose); outline-offset: 1px; }
+  button {
+    width: 100%;
+    margin-top: 6px;
+    background: var(--rose);
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--rose-deep); }
+  button:disabled { opacity: 0.6; cursor: default; }
+  .error {
+    background: var(--red-bg);
+    color: var(--red);
+    font-size: 13.5px;
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .error.show { display: block; }
+  .dedication {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--rose-deep);
+    margin: 20px 0 0;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+  }
+</style>
+</head>
+<body>
+  <form class="card" id="loginForm">
+    <svg class="heart" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5s-7.4-4.6-10-9.3C.4 8 1.6 4.6 4.8 3.7c2-.6 4 .2 5.2 2 .3.4.6.9.8 1.3.6-1.4 1.7-2.6 3.2-3 3.2-1 5.6 1.5 6.6 3.9.8 2-.2 4.4-1.4 6.1-2 2.8-5.3 5.2-7.2 6.5Z"/></svg>
+    <h1>Mi Salón</h1>
+    <p class="sub">Inicia sesión para entrar</p>
+    <div class="error" id="errorMsg">Usuario o contraseña incorrectos.</div>
+    <div class="field">
+      <label for="username">Usuario</label>
+      <input id="username" name="username" autocomplete="username" autofocus>
+    </div>
+    <div class="field">
+      <label for="password">Contraseña</label>
+      <input id="password" name="password" type="password" autocomplete="current-password">
+    </div>
+    <button type="submit" id="submitBtn">Entrar</button>
+    <p class="dedication">Con amor, Carlos 💗</p>
+  </form>
+
+<script>
+  const form = document.getElementById('loginForm');
+  const errorMsg = document.getElementById('errorMsg');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorMsg.classList.remove('show');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Entrando…';
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: document.getElementById('username').value.trim(),
+          password: document.getElementById('password').value,
+        }),
+      });
+      if (res.ok) {
+        window.location.href = '/';
+        return;
+      }
+      errorMsg.classList.add('show');
+    } catch (e) {
+      errorMsg.textContent = 'No se pudo conectar. Inténtalo de nuevo.';
+      errorMsg.classList.add('show');
+    }
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Entrar';
+  });
+</script>
+</body>
+</html>

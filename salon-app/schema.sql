@@ -1,0 +1,53 @@
+-- Esquema de la base de datos para "Mi Salón"
+-- Ejecuta este archivo una vez en tu base de datos PostgreSQL (por ejemplo, en el editor SQL de Neon).
+
+CREATE TABLE IF NOT EXISTS settings (
+  id INTEGER PRIMARY KEY DEFAULT 1,
+  salon_name TEXT NOT NULL DEFAULT 'Mi Salón',
+  stylist_name TEXT NOT NULL DEFAULT '',
+  dedication TEXT NOT NULL DEFAULT ''
+);
+INSERT INTO settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS clients (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL DEFAULT '',
+  notes TEXT NOT NULL DEFAULT ''
+);
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS instagram TEXT NOT NULL DEFAULT '';
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '';
+
+CREATE TABLE IF NOT EXISTS services (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  price NUMERIC NOT NULL DEFAULT 0,
+  duration INTEGER NOT NULL DEFAULT 0
+);
+ALTER TABLE services ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '';
+
+CREATE TABLE IF NOT EXISTS appointments (
+  id SERIAL PRIMARY KEY,
+  date DATE NOT NULL,
+  time TEXT NOT NULL DEFAULT '',
+  client_id INTEGER REFERENCES clients(id) ON DELETE SET NULL,
+  service_id INTEGER REFERENCES services(id) ON DELETE SET NULL,
+  notes TEXT NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS inventory (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  qty NUMERIC NOT NULL DEFAULT 0,
+  min_qty NUMERIC NOT NULL DEFAULT 0,
+  unit TEXT NOT NULL DEFAULT 'uds'
+);
+ALTER TABLE inventory ADD COLUMN IF NOT EXISTS image_url TEXT NOT NULL DEFAULT '';
+
+CREATE TABLE IF NOT EXISTS transactions (
+  id SERIAL PRIMARY KEY,
+  type TEXT NOT NULL, -- 'ingreso' o 'gasto'
+  concept TEXT NOT NULL DEFAULT '',
+  amount NUMERIC NOT NULL,
+  date DATE NOT NULL
+);

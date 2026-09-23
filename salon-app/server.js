@@ -296,9 +296,10 @@ app.delete('/api/transactions/:id', async (req, res) => {
 /* ---------------------------------------------------------
    Frontend estático
 --------------------------------------------------------- */
-const publicPath = path.join(__dirname, 'salon-app', 'public');
+// Al estar en Root Directory = salon-app, 'public' está directamente aquí
+const publicPath = path.join(__dirname, 'public');
 
-// Servir la carpeta estática dentro de salon-app/public
+// Servir la carpeta estática
 app.use(express.static(publicPath));
 
 // Redirigir cualquier otra ruta no-API al index.html
